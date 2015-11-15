@@ -22,4 +22,6 @@
  */
 @interface RMSyslogFormatter : NSObject <DDLogFormatter>
 
+@property (nonatomic) NSString *machineName;
+
 @end

@@ -46,6 +46,11 @@
 @property (nonatomic, assign) BOOL debug;
 
 /**
+ The machine name used in the log. Papertrail uses this to identify the system. If not set, one will be generated
+ */
+@property (nonatomic) NSString *machineName;
+
+/**
  Returns a initialized singleton instance of this logger
  */
 +(RMPaperTrailLogger *) sharedInstance;

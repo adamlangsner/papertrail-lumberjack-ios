@@ -11,12 +11,16 @@
 
 static NSString * const RMAppUUIDKey = @"RMAppUUIDKey";
 
+@interface RMSyslogFormatter ()
+
+@end
+
 @implementation RMSyslogFormatter
 
 - (NSString *)formatLogMessage:(DDLogMessage *)logMessage
 {
     NSString *msg = logMessage.message;
-    
+
     NSString *logLevel;
     switch (logMessage.flag)
     {
@@ -27,30 +31,35 @@ static NSString * const RMAppUUIDKey = @"RMAppUUIDKey";
         case DDLogFlagVerbose   : logLevel = @"15"; break;
         default                 : logLevel = @"15"; break;
     }
-    
+
     //Also display the file the logging occurred in to ease later debugging
     NSString *file = [[logMessage.file lastPathComponent] stringByDeletingPathExtension];
-    
+
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     [dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSString *timestamp = [dateFormatter stringFromDate:logMessage.timestamp];
-    
+
     //Get vendor id
     NSString *machineName = [self machineName];
-    
+
     //Get program name
     NSString *programName = [self programName];
-    
+
     NSString *log = [NSString stringWithFormat:@"<%@>%@ %@ %@: %@ %@@%@@%lu \"%@\"", logLevel, timestamp, machineName, programName, logMessage.threadID, file, logMessage.function, (unsigned long)logMessage.line, msg];
-    
+
     return log;
 }
 
 -(NSString *) machineName
 {
+    if (_machineName)
+    {
+        return _machineName;
+    }
+
     NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleExecutableKey];
     NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(__bridge NSString *)kCFBundleVersionKey];
 

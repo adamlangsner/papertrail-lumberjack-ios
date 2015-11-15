@@ -49,6 +49,12 @@
     return _sharedInstance;
 }
 
+-(void) setMachineName:(NSString *)machineName
+{
+    _machineName = machineName;
+    (RMSyslogFormatter *)self.logFormatter.machineName = machineName;
+}
+
 -(void) disconnect
 {
     @synchronized(self) {
